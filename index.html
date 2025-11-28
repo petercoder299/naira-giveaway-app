@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naira Giveaway</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 text-gray-800 min-h-screen">
+  <!-- Pages -->
+  <div id="welcome-page" class="page flex flex-col items-center justify-center px-6">
+    <h1 class="text-5xl font-black text-emerald-600 mb-6">Naira Giveaway</h1>
+    <p class="text-xl text-center mb-12 max-w-md">Win ₦1,000 every 10 mins • ₦10,000 daily • ₦100,000 weekly • ₦1,000,000 monthly</p>
+    <button onclick="showPage('main-menu')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xl py-5 px-12 rounded-2xl shadow-2xl">Enter Giveaway</button>
+  </div>
+
+  <div id="main-menu" class="page hidden flex flex-col items-center px-6">
+    <h1 class="text-4xl font-black text-emerald-600 mb-10">Select Giveaway</h1>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
+      <button onclick="showPage('naira-giveaway')" class="bg-white rounded-2xl shadow-xl p-10 hover:scale-105 transition transform">
+        <h2 class="text-3xl font-bold text-emerald-600">Naira Giveaway</h2>
+        <p class="mt-4 text-gray-600">Cash prizes</p>
+      </button>
+      <button onclick="showPlaceholder()" class="bg-white rounded-2xl shadow-xl p-10 hover:scale-105 transition transform">
+        <h2 class="text-3xl font-bold text-sky-600">Data Bundle Giveaway</h2>
+        <p class="mt-4 text-gray-600">Coming soon</p>
+      </button>
+      <button onclick="loadPastWinners(1)" class="bg-white rounded-2xl shadow-xl p-10 hover:scale-105 transition transform">
+        <h2 class="text-3xl font-bold text-purple-600">Past Winners</h2>
+        <p class="mt-4 text-gray-600">View previous winners</p>
+      </button>
+    </div>
+    <div id="admin-btn" class="fixed bottom-6 right-6 hidden">
+      <button onclick="showPage('admin-panel')" class="bg-black text-white text-sm px-4 py-2 rounded-full shadow-lg">Admin Panel</button>
+    </div>
+  </div>
+
+  <div id="naira-giveaway" class="page hidden flex flex-col items-center px-6">
+    <h1 class="text-4xl font-black text-emerald-600 mb-10">Naira Giveaway</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+      <button onclick="startGiveaway('min10')" class="bg-white rounded-2xl shadow-xl p-10 hover:scale-105 transition">
+        <div class="text-5xl font-black text-emerald-600">₦1,000</div>
+        <div class="text-xl font-bold mt-2">Every 10 Minutes</div>
+      </button>
+      <button onclick="showPlaceholder()" class="bg-white rounded-2xl shadow-xl p-10 hover:scale-105 transition">
+        <div class="text-5xl font-black text-emerald-600">₦10,000</div>
+        <div class="text-xl font-bold mt-2">Daily</div>
+      </button>
+      <button onclick="showPlaceholder()" class="bg-white rounded-2xl shadow-xl p-10 hover:scale-105 transition">
+        <div class="text-5xl font-black text-emerald-600">₦100,000</div>
+        <div class="text-xl font-bold mt-2">Weekly</div>
+      </button>
+      <button onclick="showPlaceholder()" class="bg-white rounded-2xl shadow-xl p-10 hover:scale-105 transition">
+        <div class="text-5xl font-black text-emerald-600">₦1,000,000</div>
+        <div class="text-xl font-bold mt-2">Monthly</div>
+      </button>
+    </div>
+  </div>
+
+  <div id="placeholder-page" class="page hidden flex flex-col items-center justify-center px-6 text-center">
+    <h1 class="text-4xl font-bold text-red-600 mb-6">No Giveaways At The Moment</h1>
+    <button onclick="goBack()" class="bg-emerald-600 text-white py-4 px-8 rounded-xl text-xl">Back</button>
+  </div>
+
+  <div id="entry-form" class="page hidden flex flex-col items-center px-6">
+    <h1 id="form-title" class="text-3xl font-black text-emerald-600 mb-8 text-center"></h1>
+    <form id="entryForm" class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+      <div class="mb-6">
+        <label class="block font-bold mb-2">Telegram Username</label>
+        <input id="username" type="text" class="w-full px-4 py-3 border rounded-lg" placeholder="@yourusername" required>
+      </div>
+      <div class="mb-6">
+        <label class="block font-bold mb-2">Phone Number</label>
+        <input id="phone" type="tel" value="+234" class="w-full px-4 py-3 border rounded-lg" required>
+      </div>
+      <div class="mb-6">
+        <label class="block font-bold mb-2">Secret Question</label>
+        <select id="question" class="w-full px-4 py-3 border rounded-lg" required>
+          <option value="" disabled selected>Select question</option>
+          <option>What is your mother's maiden name?</option>
+          <option>What is the name of your first pet?</option>
+          <option>What was your elementary school name?</option>
+          <option>What is your favorite movie?</option>
+          <option>In what city were you born?</option>
+          <option>Who was your childhood hero?</option>
+          <option>What is your favorite food?</option>
+          <option>What was your first car?</option>
+        </select>
+      </div>
+      <div class="mb-8">
+        <label class="block font-bold mb-2">Answer (max 35 characters)</label>
+        <input id="answer" type="text" maxlength="35" class="w-full px-4 py-3 border rounded-lg" required>
+      </div>
+      <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-5 rounded-xl text-xl">Generate Lucky Ticket</button>
+    </form>
+  </div>
+
+  <div id="ticket-display" class="page hidden flex flex-col items-center px-6">
+    <div class="bg-white rounded-2xl shadow-2xl p-10 max-w-lg w-full text-center">
+      <h1 class="text-5xl font-black text-emerald-600 mb-8">Your Lucky Ticket</h1>
+      <div class="border-4 border-dashed border-emerald-600 rounded-xl py-10 mb-10">
+        <p class="text-7xl font-black text-emerald-600" id="ticket-num"></p>
+      </div>
+      <div class="text-left space-y-3 text-lg">
+        <p><strong>Draw:</strong> <span id="draw-num"></span></p>
+        <p><strong>Prize:</strong> <span id="prize-amt"></span></p>
+        <p><strong>Username:</strong> <span id="t-username"></span></p>
+        <p><strong>Phone:</strong> <span id="t-phone"></span></p>
+        <p><strong>Question:</strong> <span id="t-question"></span></p>
+        <p><strong>Answer:</strong> <span id="t-answer"></span></p>
+      </div>
+      <p class="text-xl font-bold text-orange-600 mt-10">Screenshot this ticket!</p>
+      <p class="text-4xl font-black text-emerald-600 my-8">Good Luck!</p>
+      <button onclick="generateNew()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xl py-5 px-12 rounded-xl">Generate New Lucky Ticket</button>
+    </div>
+  </div>
+
+  <div id="past-winners" class="page hidden flex flex-col items-center px-6">
+    <h1 class="text-4xl font-black text-emerald-600 mb-8">Past Winners</h1>
+    <div id="winners-container" class="w-full max-w-3xl"></div>
+    <div class="flex gap-4 mt-8">
+      <button id="prev-btn" onclick="loadPastWinners(currentPage-1)" class="bg-gray-700 text-white py-3 px-6 rounded-xl">Previous</button>
+      <button id="next-btn" onclick="loadPastWinners(currentPage+1)" class="bg-emerald-600 text-white py-3 px-6 rounded-xl">Next</button>
+    </div>
+  </div>
+
+  <div id="winner-detail" class="page hidden flex flex-col items-center px-6">
+    <h1 class="text-4xl font-black text-emerald-600 mb-8">Draw <span id="detail-draw"></span> Winner</h1>
+    <div id="detail-container" class="bg-white rounded-2xl shadow-2xl p-10 max-w-lg w-full text-center"></div>
+  </div>
+
+  <div id="admin-panel" class="page hidden flex flex-col items-center px-6">
+    <h1 class="text-4xl font-black text-red-600 mb-10">Admin Panel</h1>
+    <p class="text-xl">Full entries & winners stored in db.json</p>
+    <p class="text-lg mt-4">You can view/edit db.json directly or build more admin endpoints later.</p>
+  </div>
+
+<script>
+  Telegram.WebApp.ready();
+  Telegram.WebApp.expand();
+
+  const user = Telegram.WebApp.initDataUnsafe.user;
+  const ADMIN_IDS = [123456789]; // SAME AS BACKEND
+  if (user && ADMIN_IDS.includes(user.id)) document.getElementById('admin-btn').classList.remove('hidden');
+
+  const pageStack = [];
+  let currentPage = 'welcome-page';
+  showPage('welcome-page', false);
+
+  function showPage(id, push = true) {
+    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    if (push) pageStack.push(currentPage);
+    currentPage = id;
+    if (pageStack.length > 0 && id !== 'ticket-display') {
+      Telegram.WebApp.BackButton.show();
+    } else {
+      Telegram.WebApp.BackButton.hide();
+    }
+  }
+  function goBack() {
+    if (pageStack.length > 0) showPage(pageStack.pop(), false);
+  }
+  Telegram.WebApp.BackButton.onClick(goBack);
+
+  let currentGiveaway = null;
+  const giveaways = {
+    min10: { name: "10 Mins Giveaway", prize: "1000 Naira", type: "10min" }
+  };
+
+  function startGiveaway(type) {
+    currentGiveaway = giveaways[type];
+    document.getElementById('form-title').innerText = `Enter 10 Mins Giveaway To Win 1000 Naira`;
+    document.getElementById('username').value = user?.username ? `@${user.username}` : '@';
+    showPage('entry-form');
+  }
+
+  function showPlaceholder() {
+    showPage('placeholder-page');
+  }
+
+  function generateNew() {
+    const pops = ['pop1','pop2','pop3','pop4','pop5'];
+    const pop = pops[Math.floor(Math.random()*5)] + '.ashawos.com';
+    window.open('https://' + pop, '_blank');
+    startGiveaway('min10');
+  }
+
+  document.getElementById('entryForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const question = document.getElementById('question').value;
+    const answer = document.getElementById('answer').value.trim();
+
+    if (!username.startsWith('@')) return alert('Username must start with @');
+    if (!phone.startsWith('+234') || phone.length < 14) return alert('Valid NG phone required');
+    if (answer.length > 35 || answer.length === 0) return alert('Answer 1-35 characters');
+
+    const body = {
+      initData: Telegram.WebApp.initData,
+      giveawayType: '10min',
+      username, phone, secretQuestion: question, secretAnswer: answer
+    };
+
+    const res = await fetch('https://YOUR-SERVER.ngrok.io/submit-entry', { // CHANGE TO YOUR URL
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!data.success) return alert(data.error || 'Error');
+
+    document.getElementById('ticket-num').innerText = data.ticketNumber;
+    document.getElementById('draw-num').innerText = data.drawNumber;
+    document.getElementById('prize-amt').innerText = '₦1,000';
+    document.getElementById('t-username').innerText = username;
+    document.getElementById('t-phone').innerText = phone;
+    document.getElementById('t-question').innerText = question;
+    document.getElementById('t-answer').innerText = answer;
+
+    showPage('ticket-display');
+  };
+
+  let currentWinnersPage = 1;
+  async function loadPastWinners(page) {
+    if (page < 1) return;
+    const res = await fetch(`https://YOUR-SERVER.ngrok.io/winners?page=${page}`);
+    const json = await res.json();
+    const container = document.getElementById('winners-container');
+    container.innerHTML = '';
+    json.winners.forEach(w => {
+      const div = document.createElement('div');
+      div.className = 'bg-white rounded-xl shadow p-6 mb-4 cursor-pointer hover:bg-gray-50';
+      div.innerHTML = `<div class="font-bold text-xl">Draw ${w.drawNumber} • ${w.time}</div>
+                       <div class="text-lg mt-2 ${w.winnerTicket ? 'text-emerald-600' : 'text-red-600'}">
+                         ${w.winnerTicket ? 'Winner: ' + w.winnerTicket : w.message}
+                       </div>`;
+      div.onclick = () => showWinnerDetail(w.drawNumber);
+      container.appendChild(div);
+    });
+    document.getElementById('prev-btn').disabled = page === 1;
+    document.getElementById('next-btn').disabled = !json.hasMore;
+    currentWinnersPage = page;
+    showPage('past-winners');
+  }
+
+  async function showWinnerDetail(draw) {
+    const res = await fetch(`https://YOUR-SERVER.ngrok.io/winner-detail?draw=${draw}`);
+    const w = await res.json();
+    document.getElementById('detail-draw').innerText = draw;
+    const cont = document.getElementById('detail-container');
+    if (!w.winnerTicket) {
+      cont.innerHTML = `<p class="text-3xl text-red-600 font-bold">${w.message}</p>`;
+    } else {
+      cont.innerHTML = `
+        <p class="text-6xl font-black text-emerald-600 mb-8">${w.winnerTicket}</p>
+        <div class="text-left space-y-4 text-lg">
+          <p><strong>Username:</strong> ${w.winnerDetails.username}</p>
+          <p><strong>Phone:</strong> ${w.winnerDetails.phone}</p>
+          <p><strong>Question:</strong> ${w.winnerDetails.question}</p>
+          <p><strong>Answer:</strong> ${w.winnerDetails.answer}</p>
+        </div>`;
+    }
+    showPage('winner-detail');
+  }
+</script>
+</body>
+</html>
