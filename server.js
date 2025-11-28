@@ -1,4 +1,9 @@
-require('dotenv').config();
+import 'dotenv/config';   // ← this replaces the require line
+
+import express from 'express';
+// ... rest of your imports (also use import, not require)
+
+
 const express = require('express');
 const cors = require('cors');
 const { Low, JSONFile } = require('lowdb');
@@ -159,4 +164,5 @@ app.post('/admin/auth', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
