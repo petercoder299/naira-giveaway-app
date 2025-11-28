@@ -1,8 +1,9 @@
 {
   "rewrites": [
-    { "source": "/submit-entry", "destination": "https://YOUR-RENDER-URL.onrender.com/submit-entry" },
-    { "source": "/winners", "destination": "https://YOUR-RENDER-URL.onrender.com/winners" },
-    { "source": "/winner-detail", "destination": "https://YOUR-RENDER-URL.onrender.com/winner-detail" },
-    { "source": "/admin/auth", "destination": "https://YOUR-RENDER-URL.onrender.com/admin/auth" }
+    { "source": "/submit-entry", "destination": "https://naira-giveaway-app.vercel.app/submit-entry" },
+    { "source": "/winners", "destination": "https://naira-giveaway-app.vercel.app/winners" },
+    { "source": "/winner-detail", "destination": "https://naira-giveaway-app.vercel.app/winner-detail" },
+    { "source": "/admin/auth", "destination": "https://naira-giveaway-app.vercel.app/admin/auth" }
   ]
+
 }
